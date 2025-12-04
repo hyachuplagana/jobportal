@@ -9,7 +9,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    
     try {
       const response = await fetch("http://localhost:8080/api/auth/signin", {
         method: "POST",
@@ -244,10 +244,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Optional Footer for larger screens */}
-      <div className="hidden md:block p-4 text-center text-sm text-[hsl(var(--muted-foreground))]">
-        <p>© 2024 NepTalent. All rights reserved.</p>
-      </div>
     </div>
   );
 };

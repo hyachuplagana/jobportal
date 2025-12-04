@@ -13,7 +13,7 @@ function AppLayout() {
   const location = useLocation();
 
   // Hide header + footer on login page
-  const hideLayout = location.pathname === ("/login","/recruiter");
+  const hideLayout = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <div className="flex flex-col min-h-screen">
