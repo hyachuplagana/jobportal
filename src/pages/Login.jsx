@@ -1,15 +1,48 @@
 import { TextField, Button, Divider } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const validateLogin = () => {
+    // Clear previous message
+    setMessage("");
+
+    // Email validation
+    if (!email.trim()) {
+      setMessage("Email is required");
+      emailRef.current?.focus();
+      return false;
+    }
+
+    // Basic email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setMessage("Please enter a valid email address");
+      return false;
+    }
+
+    // Password validation
+    if (!password) {
+      setMessage("Password is required");
+      passwordRef.current?.focus();
+      return false;
+    }
+
+    return true;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
+    if (!validateLogin()) {
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8080/api/auth/signin", {
         method: "POST",
@@ -26,7 +59,8 @@ const Login = () => {
       console.log(json);
 
       if (!response.ok || !json.success) {
-        setMessage(json.message || "Login failed");
+        setMessage("Login failed");
+        console.log(json.message);
         return;
       }
 
@@ -73,7 +107,7 @@ const Login = () => {
                         shadow-md sm:shadow-lg md:shadow-xl
                         border border-[hsl(var(--border))] 
                         bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))]">
-          
+
           {/* Title */}
           <h2 className="text-center text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6">
             Welcome Back
@@ -103,7 +137,7 @@ const Login = () => {
 
           {/* Divider */}
           <div className="my-3 sm:my-4">
-            <Divider 
+            <Divider
               sx={{
                 "& .MuiDivider-wrapper": {
                   fontSize: "0.875rem",
@@ -121,6 +155,7 @@ const Login = () => {
           <form onSubmit={handleLogin}>
             <TextField
               label="Email"
+              inputRef={emailRef} 
               variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -158,6 +193,7 @@ const Login = () => {
             <TextField
               label="Password"
               type="password"
+              inputRef={passwordRef} 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               variant="outlined"
