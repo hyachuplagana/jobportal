@@ -1,13 +1,21 @@
 // import { Button } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import React, { useRef, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { TextField, Button, Divider, Radio, CircularProgress, FormControlLabel, RadioGroup } from "@mui/material";
 import { CheckCircle, ArrowLeft } from "lucide-react";
 const AuthIn = () => {
-  const [isSignIn, setIsSignIn] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // Get user type from URL params, default to candidate
+  const userType = searchParams.get("type")?.toUpperCase() || "CANDIDATE";
+
+  const [isSignIn, setIsSignIn] = useState(true);
   const [signInEmail, setSignInEmail] = useState("");
   const [singInPassword, setSignInPassword] = useState("");
-  const [message, setMessage] = useState("");
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -26,96 +34,17 @@ const AuthIn = () => {
   const handleBack = () => setStage((s) => s - 1);
   const handleStartOver = () => setStage(1);
 
-
-  const handleVerification = async () => {
-    if (verificationCode.trim() !== "123456") {
-      // alert("Invalid verification code. Please enter 1234");
-      return;
-    }
-
-    setIsVerifying(true);
-    try {
-      // Run signupUser function
-      await signUpEHE();
-      handleNext();
-    } catch (error) {
-      console.error("Verification failed:", error);
-      // Error is already handled in signupUser, but you can add more handling here if needed
-    } finally {
-      setIsVerifying(false); // End loading state
-
-    }
-
-  }
-  const signUpEHE = async () => {
-    console.log("yup")
-  }
-  const signupUser = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          email: email,
-          password: password,
-          roleEnums: accountType === "CANDIDATE" ? ["CANDIDATE"] : ["RECRUITER"],
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Signup failed");
-      }
-
-      const data = await response.json();
-      console.log("Signup successful:", data);
-
-
-    } catch (error) {
-      console.error("Signup Error:", error);
-      alert("Signup failed: " + error.message);
-    }
-  }
-
-  const validateLogin = () => {
-    // Clear previous message
-    setMessage("");
-
-    // Email validation
-    if (!signInEmail.trim()) {
-      setMessage("Email is required");
-      emailRef.current?.focus();
-      return false;
-    }
-
-    // Basic email format check
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(signInEmail.trim())) {
-      setMessage("Please enter a valid email address");
-      return false;
-    }
-
-    // Password validation
-    if (!singInPassword) {
-      setMessage("Password is required");
-      passwordRef.current?.focus();
-      return false;
-    }
-
-    return true;
-  };
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!validateLogin()) {
-      return;
-    }
+    const endpoints = {
+      "CANDIDATE": "http://localhost:8080/api/auth/candidate/login",
+      "RECRUITER": "http://localhost:8080/api/auth/recruiter/login",
+      "ADMIN": "http://localhost:8080/api/auth/admin/login"
+    };
+
     try {
-      const response = await fetch("http://localhost:8080/api/auth/candidate/login", {
+      const response = await fetch(endpoints[userType], {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +59,9 @@ const AuthIn = () => {
       console.log(json);
 
       if (!response.ok || !json.success) {
-        setMessage("Login failed");
+
+        toast.error(`Login failed: ${json.message}`)
+
         console.log(json.message);
         return;
       }
@@ -139,27 +70,112 @@ const AuthIn = () => {
       const accessToken = json.data?.accessToken;
 
       if (!accessToken) {
-        setMessage("Token not received from server");
+        toast.error("Token not received from server")
         return;
       }
 
       // Save access token
       localStorage.setItem("accessToken", accessToken);
 
-      setMessage("Login successful!");
-      console.log("Logged in:", accessToken);
-
-      // Optional: redirect
-      // window.location.href = "/dashboard";
+      toast.success("Login Succesfull")
 
     } catch (err) {
       console.error("Login Error:", err);
-      setMessage("Server error. Please try again later.");
+      toast.error("Server error")
+
     }
   };
 
+
+  const handleVerification = async () => {
+    if (verificationCode.trim() !== "123456") {
+      // alert("Invalid verification code. Please enter 1234");
+      return;
+    }
+
+    setIsVerifying(true);
+
+    handleNext();
+
+    setIsVerifying(false); // End loading state
+
+  }
+
+  const validateSignup = () => {
+
+    //fullname checkup 
+    if (!username) {
+      toast.error("Full Name is required");
+      return false;
+    }
+
+    if (!email.trim()) {
+      toast.error("Email is required");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+
+    return true;
+  };
+  const signupUser = async () => {
+    // console.log("Eta")
+    // First validate the inputs
+    if (!validateSignup()) {
+      return;
+    }
+    // console.log("uta")
+    try {
+
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          email: email,
+          password: password,
+          roleEnums: accountType === "CANDIDATE" ? ["CANDIDATE"] : ["RECRUITER"],
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        // Use the message from the backend response
+        throw new Error(result.message || "Signup failed");
+      }
+
+      console.log("Signup successful:", result);
+      toast.success("Signup Successful");
+
+
+    } catch (error) {
+      console.error("Signup Error:", error);
+      // This will show the backend's error message (e.g., "User already exists")
+      toast.error(`Signup failed: ${error.message}`)
+    }
+  }
+
   return (
     <div className="min-h-screen w-full flex text-gray-900">
+      <ToastContainer
+        position="top-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
 
       {/* Left Section - Login Form */}
       <div style={{ backgroundColor: "hsl(var(--background))" }} className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 lg:p-16"
@@ -173,12 +189,26 @@ const AuthIn = () => {
 
           {/* Form Title and Description */}
           <div className="mb-8">
-            <h2 style={{ color: "hsl(var(--foreground))" }} className="text-2xl md:text-3xl text-center font-bold mb-2">
-              Sign in to your account
-            </h2>
-            <p style={{ color: "hsl(var(--muted-foreground))" }} className=" text-center">
-              Sign in to begin your journey.
-            </p>
+            {isSignIn ? (
+              <div>
+                <h2 style={{ color: "hsl(var(--foreground))" }} className="text-2xl md:text-3xl text-center font-bold mb-2">
+                  WELCOME {userType}
+                </h2>
+                <p style={{ color: "hsl(var(--muted-foreground))" }} className=" text-center">
+                  Sign in to begin your journey.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <h2 style={{ color: "hsl(var(--foreground))" }} className="text-2xl md:text-3xl text-center font-bold mb-2">
+                  Sign Up
+                </h2>
+                <p style={{ color: "hsl(var(--muted-foreground))" }} className=" text-center">
+                  Create Your Account.
+                </p>
+              </div>
+            )}
+
           </div>
 
           {isSignIn ? (
@@ -226,13 +256,7 @@ const AuthIn = () => {
                 Sign in
               </button>
 
-              {/* Message Display */}
-              {message && (
-                <p className={`text-center text-sm ${message.includes("successful") ? "text-[hsl(var(--foreground))]" : "text-[hsl(var(--destructive))]"
-                  }`}>
-                  {message}
-                </p>
-              )}
+
 
               {/* Sign Up Link */}
               <div className="text-center">
@@ -261,6 +285,7 @@ const AuthIn = () => {
                     </label>
                     <input
                       type="text"
+
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Ram Bahadur"
@@ -319,29 +344,17 @@ const AuthIn = () => {
                   </div>
 
                   <button
+                    type="button"
                     onClick={(e) => {
 
-                      handleNext();
+                      signupUser();
                     }}
                     className="mt-4 mb-4 w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--background))] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))]"
                   >
                     Continue
                   </button>
-                  {/* <Button
 
-              onClick={signupUser}
-              fullWidth
-              size="large"
-              
-              sx={{
-                mt: 3,
-                backgroundColor: "hsl(var(--primary))",
-                color: "hsl(var(--primary-foreground))",
-                "&:hover": { backgroundColor: "hsl(var(--accent))" },
-              }}
-            >
-              Continue
-            </Button> */}
+
                   {/* Sign Up Link */}
                   <div className="text-center">
                     <p className="text-sm  font-light text-[hsl(var(--foreground))]">
