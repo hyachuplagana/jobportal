@@ -23,6 +23,7 @@ const Home = () => {
         edgeFade={0.25}
         transparent
       />
+      {/* <FloatingLines/> */}
 
       {/* Text content positioned absolutely over the FloatingLines */}
       <div style={{

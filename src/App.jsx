@@ -10,6 +10,7 @@ import PostJob from './components/PostJob'
 import { useEffect } from 'react'
 import ColorPalette from './pages/ColorPalette'
 import AuthIn from './pages/AuthIn'
+import ResetPasssword from './pages/ResetPasssword'
 
 
 function AppLayout() {
@@ -17,7 +18,7 @@ function AppLayout() {
     
 
   // Hide header + footer on login page
-  const hideLayout = location.pathname === "/auth"
+  const hideLayout = location.pathname === "/auth" || location.pathname === "/forgot-password"
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -30,7 +31,9 @@ function AppLayout() {
           <Route path="/colors" element={<ColorPalette />}/>
          
           <Route path="/auth" element={<AuthIn/>}/>
-          <Route path="/recruiterdashboard/*" element={<RecruiterDashboard/>}/>
+          <Route path="/forgot-password" element={<ResetPasssword/>}/>
+
+          <Route path="/recruiter-dashboard/*" element={<RecruiterDashboard/>}/>
           
           
         </Routes>

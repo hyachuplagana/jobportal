@@ -6,6 +6,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, Button, Divider, Radio, CircularProgress, FormControlLabel, RadioGroup } from "@mui/material";
 import { CheckCircle, ArrowLeft } from "lucide-react";
+
+
+
 const AuthIn = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -19,6 +22,8 @@ const AuthIn = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
+
+
   // signup ko lagi
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -27,7 +32,7 @@ const AuthIn = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  const [stage, setStage] = useState(1);
+  const [stage, setStage] = useState(2);
   const [accountType, setAccountType] = useState("CANDIDATE");
 
   const handleNext = () => setStage((s) => s + 1);
@@ -160,6 +165,7 @@ const AuthIn = () => {
       // This will show the backend's error message (e.g., "User already exists")
       toast.error(`Signup failed: ${error.message}`)
     }
+
   }
 
   return (
@@ -178,21 +184,17 @@ const AuthIn = () => {
       />
 
       {/* Left Section - Login Form */}
-      <div style={{ backgroundColor: "hsl(var(--background))" }} className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 lg:p-16"
-
-      >
-        {/* Header/Brand */}
-
-
+      <div style={{ backgroundColor: "hsl(var(--background))" }} className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 lg:p-16">
         <div className="w-full max-w-md mx-auto">
 
-
+          
           {/* Form Title and Description */}
           <div className="mb-8">
             {isSignIn ? (
               <div>
-                <h2 style={{ color: "hsl(var(--foreground))" }} className="text-2xl md:text-3xl text-center font-bold mb-2">
+                <h2 style={{ color: "hsl(var(--primary))" }} className="text-2xl md:text-3xl text-center font-bold mb-2">
                   WELCOME {userType}
+
                 </h2>
                 <p style={{ color: "hsl(var(--muted-foreground))" }} className=" text-center">
                   Sign in to begin your journey.
@@ -251,7 +253,7 @@ const AuthIn = () => {
               {/* Sign In Button */}
               <button
                 type="submit"
-                className="w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--background))] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))]"
+                className="w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium  hover:text-[hsl(var(--primary-foreground))]  hover:bg-[hsl(var(--primary))] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))]"
               >
                 Sign in
               </button>
@@ -259,8 +261,8 @@ const AuthIn = () => {
 
 
               {/* Sign Up Link */}
-              <div className="text-center">
-                <p className="text-sm  font-light text-[hsl(var(--foreground))]">
+              <div className="flex ">
+                <p className=" flex-none text-sm  font-light text-[hsl(var(--foreground))]">
                   Don't have an account?{" "}
                   <a
                     onClick={(e) => {
@@ -272,6 +274,14 @@ const AuthIn = () => {
                     Sign up
                   </a>
                 </p>
+                <div className="flex-grow"></div>
+                <a
+                  href="/forgot-password"
+                  className="flex-none text-sm text-[hsl(var(--foreground))] hover:underline cursor-pointer"
+
+                >
+                  Forgot password?
+                </a>
               </div>
             </form>
           ) : (
@@ -349,7 +359,7 @@ const AuthIn = () => {
 
                       signupUser();
                     }}
-                    className="mt-4 mb-4 w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--background))] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))]"
+                    className="mt-4 mb-4 w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))]"
                   >
                     Continue
                   </button>
@@ -420,7 +430,7 @@ const AuthIn = () => {
                   <button
                     onClick={handleVerification}
                     disabled={isVerifying}
-                    className={`w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))] ${isVerifying ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--background))]'}`}
+                    className={`w-full py-2 bg-[hsl(var(--background))] border border-[hsl(var(--foreground))] text-[hsl(var(--foreground))] rounded-lg font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[hsl(var(--foreground))] ${isVerifying ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))]'}`}
                   >
                     {isVerifying ? (
                       <>
@@ -451,7 +461,7 @@ const AuthIn = () => {
               {/* Stage 3: Success */}
               {stage === 3 && (
                 <div>
-                  <CheckCircle style={{ color: "hsl(var(--accent))" }} className="mx-auto mb-4" size={64} />
+                  <CheckCircle style={{ color: "hsl(var(--primary))" }} className="mx-auto mb-4" size={64} />
                   <h2 className="text-xl font-semibold text-center text-[hsl(var(--foreground))] mb-2">You're all set!</h2>
                   <p className="text-base text-center text-[hsl(var(--muted-foreground))]">Your account has been created successfully.</p>
 
@@ -496,28 +506,7 @@ const AuthIn = () => {
 
       {/* Right Section - Image */}
       <div className="hidden md:block md:w-1/2 relative bg-gray-100">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80)',
-          }}
-        />
-
-        {/* Overlay Content */}
-        <div className="relative h-full flex flex-col justify-between p-12">
-          {/* Top content area - could add text here if needed */}
-          <div></div>
-
-          {/* Bottom content area */}
-          <div className="text-white">
-            <div className="mb-4">
-              <span className="text-sm font-medium text-white/80">Welcome Back!</span>
-            </div>
-            <h3 className="text-3xl font-bold mb-2">The JF</h3>
-            <p className="text-lg text-white/80">Easwhera UI</p>
-          </div>
-        </div>
+        
       </div>
     </div>
   );
