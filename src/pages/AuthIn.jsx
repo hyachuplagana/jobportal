@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, Button, Divider, Radio, CircularProgress, FormControlLabel, RadioGroup } from "@mui/material";
 import { CheckCircle, ArrowLeft } from "lucide-react";
+import PixelBlast from "../components/PixelBlast";
 
 
 
@@ -32,7 +33,7 @@ const AuthIn = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
 
-  const [stage, setStage] = useState(2);
+  const [stage, setStage] = useState(1);
   const [accountType, setAccountType] = useState("CANDIDATE");
 
   const handleNext = () => setStage((s) => s + 1);
@@ -187,7 +188,7 @@ const AuthIn = () => {
       <div style={{ backgroundColor: "hsl(var(--background))" }} className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 lg:p-16">
         <div className="w-full max-w-md mx-auto">
 
-          
+
           {/* Form Title and Description */}
           <div className="mb-8">
             {isSignIn ? (
@@ -504,9 +505,28 @@ const AuthIn = () => {
         </div>
       </div>
 
-      {/* Right Section - Image */}
-      <div className="hidden md:block md:w-1/2 relative bg-gray-100">
-        
+      {/* Right Section */}
+      <div className=" md:block md:w-1/2 relative bg-[hsl(var(--background))]">
+       
+<PixelBlast
+        variant="circle"
+        pixelSize={8}
+        color="#EE432F"
+        patternScale={4}
+        patternDensity={1.6}
+        pixelSizeJitter={0.5}
+        enableRipples
+        rippleSpeed={0.8}
+        rippleThickness={0.22}
+        rippleIntensityScale={1.5}
+        liquid
+        liquidStrength={0.12}
+        liquidRadius={1.2}
+        liquidWobbleSpeed={5}
+        speed={0.6}
+        edgeFade={0.55}
+        transparent
+      />
       </div>
     </div>
   );

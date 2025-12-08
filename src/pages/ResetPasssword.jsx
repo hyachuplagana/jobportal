@@ -8,7 +8,7 @@ const ResetPassword = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [stage, setStage] = useState(2); // 1: Email, 2: Verification, 3: New Password
+  const [stage, setStage] = useState(1); // 1: Email, 2: Verification, 3: New Password
   const [isLoading, setIsLoading] = useState(false);
   const [resetToken, setResetToken] = useState('');
 

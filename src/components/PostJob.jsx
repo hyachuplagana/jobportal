@@ -16,20 +16,20 @@ const PostJob = () => {
   // Validation rules
   const validateField = (name, value) => {
     let error = '';
-    
+
     switch (name) {
       case 'title':
         if (!value.trim()) error = 'Job title is required';
         else if (value.length < 3) error = 'Title must be at least 3 characters';
         else if (value.length > 100) error = 'Title must be less than 100 characters';
         break;
-      
+
       case 'salary':
         if (value) {
           // Remove commas and Rs. prefix if present
           const numericValue = value.replace(/[^\d]/g, '');
           const num = parseInt(numericValue, 10);
-          
+
           if (isNaN(num)) {
             error = 'Salary must be a valid number';
           } else if (num < 0) {
@@ -41,19 +41,19 @@ const PostJob = () => {
           }
         }
         break;
-      
+
       case 'description':
         if (!value.trim()) error = 'Description is required';
         else if (value.length < 50) error = 'Description must be at least 50 characters';
         else if (value.length > 5000) error = 'Description must be less than 5000 characters';
         break;
-      
+
       case 'requirements':
         if (!value.trim()) error = 'Requirements are required';
         else if (value.length < 30) error = 'Requirements must be at least 30 characters';
         else if (value.length > 3000) error = 'Requirements must be less than 3000 characters';
         break;
-      
+
       case 'applicationDeadline':
         if (value) {
           const today = new Date();
@@ -62,7 +62,7 @@ const PostJob = () => {
           minDate.setDate(today.getDate() + 3);
           const maxDate = new Date(today);
           maxDate.setMonth(today.getMonth() + 3);
-          
+
           if (deadline < minDate) {
             error = 'Deadline must be at least 3 days from today';
           } else if (deadline > maxDate) {
@@ -70,33 +70,33 @@ const PostJob = () => {
           }
         }
         break;
-      
+
       default:
         break;
     }
-    
+
     return error;
   };
 
   // Format salary as user types
   const handleSalaryChange = (e) => {
     const { value } = e.target;
-    
+
     // Remove all non-digit characters
     const numericValue = value.replace(/[^\d]/g, '');
-    
+
     // Format with commas (Indian numbering system)
     let formattedValue = '';
     if (numericValue) {
       const num = parseInt(numericValue, 10);
       formattedValue = num.toLocaleString('en-IN');
     }
-    
+
     setJobData(prev => ({
       ...prev,
       salary: formattedValue
     }));
-    
+
     // Validate
     const error = validateField('salary', formattedValue);
     setErrors(prev => ({
@@ -107,17 +107,17 @@ const PostJob = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === 'salary') {
       handleSalaryChange(e);
       return;
     }
-    
+
     setJobData(prev => ({
       ...prev,
       [name]: value
     }));
-    
+
     // Validate on change
     const error = validateField(name, value);
     setErrors(prev => ({
@@ -128,7 +128,7 @@ const PostJob = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     Object.keys(jobData).forEach(key => {
       // All fields except salary and deadline are required
       if (key !== 'salary' && key !== 'applicationDeadline') {
@@ -136,37 +136,37 @@ const PostJob = () => {
         if (error) newErrors[key] = error;
       }
     });
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       alert('Please fix the errors before submitting');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Format final salary with Rs. prefix
     const formattedSalary = jobData.salary ? `Rs. ${jobData.salary}` : 'Not specified';
-    
+
     // Create job data for submission
     const jobDataToSubmit = {
       ...jobData,
       salary: jobData.salary ? parseInt(jobData.salary.replace(/,/g, ''), 10) : null,
       salaryDisplay: formattedSalary
     };
-    
+
     // Simulate API call
     setTimeout(() => {
       console.log('Job posted:', jobDataToSubmit);
       alert(`Job posted successfully!\n\nSalary: ${formattedSalary}`);
       setIsSubmitting(false);
-      
+
       // Reset form
       setJobData({
         title: '',
@@ -201,26 +201,26 @@ const PostJob = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100 p-4 md:p-8">
+    <div className="p-6 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
             Post a New Job
           </h1>
-          <p className="text-gray-400 mt-3">Fill in the job details below</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-3">Fill in the job details below</p>
         </div>
 
         {/* Job Posting Form */}
-        <form onSubmit={handleSubmit} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 md:p-8 shadow-2xl shadow-black/30">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8 shadow-lg">
           <div className="space-y-8">
             {/* Job Title */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Job Title <span className="text-red-400">*</span>
                 </label>
-                <span className={`text-xs ${characterCounts.title > 100 ? 'text-red-400' : 'text-gray-500'}`}>
+                <span className={`text-xs ${characterCounts.title > 100 ? 'text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
                   {characterCounts.title}/100
                 </span>
               </div>
@@ -230,11 +230,10 @@ const PostJob = () => {
                 value={jobData.title}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-100 placeholder-gray-500 ${
-                  errors.title 
-                    ? 'border-red-500 focus:ring-red-500/50' 
-                    : 'border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
-                }`}
+                className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 ${errors.title
+                  ? 'border-red-500 focus:ring-red-500/50'
+                  : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
+                  }`}
                 placeholder="e.g. Senior Java Developer"
                 maxLength={100}
               />
@@ -251,7 +250,7 @@ const PostJob = () => {
             {/* Job Type and Salary */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Job Type <span className="text-red-400">*</span>
                 </label>
                 <select
@@ -259,7 +258,7 @@ const PostJob = () => {
                   value={jobData.jobType}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-gray-900/70 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 text-gray-100"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/70 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-gray-100"
                 >
                   <option value="full-time">Full Time</option>
                   <option value="part-time">Part Time</option>
@@ -272,31 +271,30 @@ const PostJob = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Monthly Salary (Optional)
-                  <span className="ml-2 text-xs text-gray-500">in ₹</span>
+                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">in ₹</span>
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400">Rs.</span>
+                    <span className="text-gray-500 dark:text-gray-400">Rs.</span>
                   </div>
                   <input
                     type="text"
                     name="salary"
                     value={jobData.salary}
                     onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-3 bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-100 placeholder-gray-500 ${
-                      errors.salary 
-                        ? 'border-red-500 focus:ring-red-500/50' 
-                        : 'border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
-                    }`}
+                    className={`w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 ${errors.salary
+                      ? 'border-red-500 focus:ring-red-500/50'
+                      : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
+                      }`}
                     placeholder="e.g. 45,000"
                   />
                 </div>
                 {errors.salary && (
                   <p className="mt-2 text-sm text-red-400">{errors.salary}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   Minimum: Rs. 5,000 | Maximum: Rs. 1,00,00,000
                 </p>
               </div>
@@ -304,9 +302,9 @@ const PostJob = () => {
 
             {/* Application Deadline */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Application Deadline
-                <span className="ml-2 text-xs text-gray-500">
+                <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
                   (Optional - must be 3 days to 3 months from today)
                 </span>
               </label>
@@ -317,11 +315,10 @@ const PostJob = () => {
                 onChange={handleChange}
                 min={getMinDate()}
                 max={getMaxDate()}
-                className={`w-full px-4 py-3 bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-100 ${
-                  errors.applicationDeadline 
-                    ? 'border-red-500 focus:ring-red-500/50' 
-                    : 'border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
-                }`}
+                className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-gray-100 ${errors.applicationDeadline
+                  ? 'border-red-500 focus:ring-red-500/50'
+                  : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
+                  }`}
               />
               {errors.applicationDeadline && (
                 <p className="mt-2 text-sm text-red-400">{errors.applicationDeadline}</p>
@@ -331,10 +328,10 @@ const PostJob = () => {
             {/* Job Description */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Job Description <span className="text-red-400">*</span>
                 </label>
-                <span className={`text-xs ${characterCounts.description > 5000 ? 'text-red-400' : 'text-gray-500'}`}>
+                <span className={`text-xs ${characterCounts.description > 5000 ? 'text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
                   {characterCounts.description}/5000
                 </span>
               </div>
@@ -345,11 +342,10 @@ const PostJob = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className={`w-full px-4 py-3 bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-100 placeholder-gray-500 resize-y min-h-[150px] ${
-                    errors.description 
-                      ? 'border-red-500 focus:ring-red-500/50' 
-                      : 'border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-y min-h-[150px] ${errors.description
+                    ? 'border-red-500 focus:ring-red-500/50'
+                    : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
+                    }`}
                   placeholder="Describe the role, responsibilities, and what you're looking for in a candidate..."
                   maxLength={5000}
                 />
@@ -361,12 +357,12 @@ const PostJob = () => {
                       const textarea = document.getElementsByName('description')[0];
                       const start = textarea.selectionStart;
                       const end = textarea.selectionEnd;
-                      const newText = jobData.description.substring(0, start) + '**' + 
-                                      jobData.description.substring(start, end) + '**' + 
-                                      jobData.description.substring(end);
+                      const newText = jobData.description.substring(0, start) + '**' +
+                        jobData.description.substring(start, end) + '**' +
+                        jobData.description.substring(end);
                       setJobData(prev => ({ ...prev, description: newText }));
                     }}
-                    className="text-xs px-2 py-1 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
+                    className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
                     title="Bold"
                   >
                     <strong>B</strong>
@@ -376,11 +372,11 @@ const PostJob = () => {
                     onClick={() => {
                       const textarea = document.getElementsByName('description')[0];
                       const start = textarea.selectionStart;
-                      const newText = jobData.description.substring(0, start) + '\n• ' + 
-                                      jobData.description.substring(start);
+                      const newText = jobData.description.substring(0, start) + '\n• ' +
+                        jobData.description.substring(start);
                       setJobData(prev => ({ ...prev, description: newText }));
                     }}
-                    className="text-xs px-2 py-1 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
+                    className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
                     title="Bullet point"
                   >
                     •
@@ -390,21 +386,21 @@ const PostJob = () => {
               {errors.description && (
                 <p className="mt-2 text-sm text-red-400">{errors.description}</p>
               )}
-              <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-2">
+              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
                 <span>💡 Tips:</span>
-                <span className="text-gray-400">Use **bold** for emphasis</span>
-                <span className="text-gray-400">• Use bullet points</span>
-                <span className="text-gray-400">Be specific about responsibilities</span>
+                <span className="text-gray-500 dark:text-gray-400">Use **bold** for emphasis</span>
+                <span className="text-gray-500 dark:text-gray-400">• Use bullet points</span>
+                <span className="text-gray-500 dark:text-gray-400">Be specific about responsibilities</span>
               </div>
             </div>
 
             {/* Requirements */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-300">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Requirements & Qualifications <span className="text-red-400">*</span>
                 </label>
-                <span className={`text-xs ${characterCounts.requirements > 3000 ? 'text-red-400' : 'text-gray-500'}`}>
+                <span className={`text-xs ${characterCounts.requirements > 3000 ? 'text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
                   {characterCounts.requirements}/3000
                 </span>
               </div>
@@ -415,11 +411,10 @@ const PostJob = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className={`w-full px-4 py-3 bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-100 placeholder-gray-500 resize-y min-h-[150px] ${
-                    errors.requirements 
-                      ? 'border-red-500 focus:ring-red-500/50' 
-                      : 'border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
-                  }`}
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/70 border rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 resize-y min-h-[150px] ${errors.requirements
+                    ? 'border-red-500 focus:ring-red-500/50'
+                    : 'border-gray-300 dark:border-gray-700 focus:ring-blue-500/50 focus:border-transparent'
+                    }`}
                   placeholder="List the required skills, experience, and qualifications..."
                   maxLength={3000}
                 />
@@ -440,7 +435,7 @@ const PostJob = () => {
                         setJobData(prev => ({ ...prev, requirements: newText }));
                       }
                     }}
-                    className="text-xs px-2 py-1 bg-gray-800 rounded hover:bg-gray-700 transition-colors"
+                    className="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
                     title="Format as bullet points"
                   >
                     Format
@@ -450,17 +445,17 @@ const PostJob = () => {
               {errors.requirements && (
                 <p className="mt-2 text-sm text-red-400">{errors.requirements}</p>
               )}
-              <div className="mt-2 text-xs text-gray-500">
+              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <span>💡 Separate requirements with bullet points or line breaks</span>
               </div>
-              
+
               {/* Example requirements format */}
-              <div className="mt-3 p-3 bg-gray-900/30 rounded-lg border border-gray-700/50">
-                <p className="text-xs text-gray-400 mb-1">Example format:</p>
-                <pre className="text-xs text-gray-500 font-mono whitespace-pre-wrap">
-                  • 3+ years experience with Java<br/>
-                  • Strong knowledge of Spring Boot<br/>
-                  • Experience with MySQL or PostgreSQL<br/>
+              <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-900/30 rounded-lg border border-gray-200 dark:border-gray-700/50">
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Example format:</p>
+                <pre className="text-xs text-gray-500 dark:text-gray-500 font-mono whitespace-pre-wrap">
+                  • 3+ years experience with Java<br />
+                  • Strong knowledge of Spring Boot<br />
+                  • Experience with MySQL or PostgreSQL<br />
                   • Bachelor's degree in Computer Science or related field
                 </pre>
               </div>
@@ -468,8 +463,8 @@ const PostJob = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="mt-10 pt-6 border-t border-gray-700/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-500">
+          <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               Fields marked with <span className="text-red-400">*</span> are required
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
