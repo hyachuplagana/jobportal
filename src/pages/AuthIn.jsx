@@ -301,7 +301,13 @@ const AuthIn = () => {
 
       // Redirect based on user type
       setTimeout(() => {
-        navigate("/");
+        if (userTypeFromParams === "CANDIDATE") {
+          navigate("/candidate-dashboard");
+        } else if (userTypeFromParams === "RECRUITER") {
+          navigate("/recruiter-dashboard");
+        } else {
+          navigate("/");
+        }
       }, 1000);
 
     } catch (err) {

@@ -10,14 +10,14 @@ import ColorPalette from './pages/ColorPalette'
 import AuthIn from './pages/AuthIn'
 import ResetPasssword from './pages/ResetPasssword'
 import { AuthProvider } from './context/AuthContext'
-
+import CandidateDashboard from './pages/CandidateDashboard.jsx'
 
 function AppLayout() {
   const location = useLocation();
 
 
   // Hide header + footer on login page
-  const hideLayout = location.pathname === "/auth" || location.pathname === "/forgot-password" || location.pathname === "/recruiter-dashboard"
+  const hideLayout = location.pathname === "/auth" || location.pathname === "/forgot-password" || location.pathname === "/recruiter-dashboard" || location.pathname === "/candidate-dashboard"
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -33,6 +33,7 @@ function AppLayout() {
           <Route path="/forgot-password" element={<ResetPasssword />} />
 
           <Route path="/recruiter-dashboard/*" element={<RecruiterDashboard />} />
+          <Route path="/candidate-dashboard/*" element={<CandidateDashboard />} />
 
 
         </Routes>
