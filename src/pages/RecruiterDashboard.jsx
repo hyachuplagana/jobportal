@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import PostJob from '../components/PostJob';
-import RecruiterHome from '../components/RecruiterHome';
+import { Link, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import PostJob from '../components/dashboard/recruiter/PostJob';
+import RecruiterHome from '../components/dashboard/recruiter/RecruiterHome';
+import SidebarFooter from '../components/dashboard/SidebarFooter';
+import { useAuth } from '../context/AuthContext';
 
 const RecruiterDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    logout();
+    navigate('/auth?type=recruiter');
+  };
   const navigation = [
     {
       name: 'Home',
@@ -34,7 +42,7 @@ const RecruiterDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-[hsl(var(--background))] ">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div
@@ -45,17 +53,17 @@ const RecruiterDashboard = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[hsl(var(--card))] border-r border-[hsl(var(--border))] transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
       >
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] bg-clip-text text-transparent">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-[hsl(var(--border))]">
+          <h2 className="text-xl font-bold text-[hsl(var(--foreground))]">
             Recruiter Portal
           </h2>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="lg:hidden text-[hsl(var(--foreground))] hover:text-[hsl(var(--foreground))] dark:text-gray-400 dark:hover:text-gray-200"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -73,8 +81,8 @@ const RecruiterDashboard = () => {
                 to={item.path}
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${active
-                    ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-lg shadow-[hsl(var(--primary))]/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                  ? 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-lg shadow-[hsl(var(--primary))]/20'
+                  : 'text-[hsl(var(--foreground))] hover:bg-[hsl(var(--primary))]'
                   }`}
               >
                 {item.icon}
@@ -85,30 +93,16 @@ const RecruiterDashboard = () => {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--accent))] flex items-center justify-center text-white font-semibold">
-              R
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                Recruiter
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                recruiter@company.com
-              </p>
-            </div>
-          </div>
-        </div>
+        <SidebarFooter />
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 lg:px-6">
+        <header className="h-16 bg-[hsl(var(--card))] border-b border-[hsl(var(--border))] flex items-center justify-between px-4 lg:px-6">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="lg:hidden text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))]"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -129,15 +123,17 @@ const RecruiterDashboard = () => {
               </svg>
               <span className="absolute top-1 right-1 w-2 h-2 bg-[hsl(var(--primary))] rounded-full"></span>
             </button>
+            <button
+              onClick={handleLogout}
+              className="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              Logout
+            </button>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
-          <Routes>
-            <Route path="" element={<RecruiterHome />} />
-            <Route path="postjob" element={<PostJob />} />
-          </Routes>
+        <main className="flex-1 overflow-y-auto bg-[hsl(var(--background))]">
+          <Outlet />
         </main>
       </div>
     </div>

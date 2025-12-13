@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
-import CandidateHome from '../components/CandidateHome';
-import SidebarFooter from '../components/SidebarFooter';
+import { Link, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import CandidateHome from '../components/dashboard/candidate/CandidateHome';
+import SidebarFooter from '../components/dashboard/SidebarFooter';
+import { useAuth } from '../context/AuthContext';
 // Import other candidate-specific components as needed
 // import JobSearch from '../components/JobSearch';
 // import Applications from '../components/Applications';
@@ -10,7 +11,12 @@ import SidebarFooter from '../components/SidebarFooter';
 const CandidateDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const location = useLocation();
-
+    const navigate = useNavigate();
+    const { logout } = useAuth();
+    const handleLogout = () => {
+        logout();
+        navigate('/auth?type=candidate');
+    };
     const navigation = [
         {
             name: 'Home',
@@ -56,7 +62,7 @@ const CandidateDashboard = () => {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex h-screen bg-[hsl(var(--background))] ">
             {/* Mobile Sidebar Overlay */}
             {isSidebarOpen && (
                 <div
@@ -67,17 +73,17 @@ const CandidateDashboard = () => {
 
             {/* Sidebar */}
             <aside
-                className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+                className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[hsl(var(--card))] border-r border-[hsl(var(--border))] transform transition-transform duration-200 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
                     }`}
             >
                 {/* Sidebar Header */}
-                <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] bg-clip-text text-transparent">
+                <div className="h-16 flex items-center justify-between px-6 border-b border-[hsl(var(--border))]">
+                    <h2 className="text-xl font-bold text-[hsl(var(--foreground))]">
                         Candidate Portal
                     </h2>
                     <button
                         onClick={() => setIsSidebarOpen(false)}
-                        className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        className="lg:hidden text-[hsl(var(--foreground))] hover:text-[hsl(var(--foreground))] dark:text-gray-400 dark:hover:text-gray-200"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -113,7 +119,7 @@ const CandidateDashboard = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top Bar */}
-                <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 lg:px-6">
+                <header className="h-16 bg-[hsl(var(--card))] border-b border-[hsl(var(--border))] flex items-center justify-between px-4 lg:px-6">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
                         className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -137,18 +143,17 @@ const CandidateDashboard = () => {
                             </svg>
                             <span className="absolute top-1 right-1 w-2 h-2 bg-[hsl(var(--primary))] rounded-full"></span>
                         </button>
+                        <button
+                            onClick={handleLogout}
+                            className="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            Logout
+                        </button>
                     </div>
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
-                    <Routes>
-                        <Route path="" element={<CandidateHome />} />
-                        {/* Add other candidate routes */}
-                        {/* <Route path="jobs" element={<JobSearch />} />
-                        <Route path="applications" element={<Applications />} />
-                        <Route path="profile" element={<Profile />} /> */}
-                    </Routes>
+                <main className="flex-1 overflow-y-auto bg-[hsl(var(--background))]">
+                    <Outlet />
                 </main>
             </div>
         </div>

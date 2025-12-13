@@ -27,12 +27,35 @@ export const AuthProvider = ({ children }) => {
         setUserRole(role);
     };
 
-    const logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userRole');
-        setIsAuthenticated(false);
-        setUserRole(null);
+    const logout = async () => {
+        try {
+            // Get the refresh token before removing it from localStorage
+            const refreshToken = localStorage.getItem('refreshToken');
+
+            // Call the signout API to invalidate the refresh token on the server
+            if (refreshToken) {
+                await fetch('/api/auth/signout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ refreshToken }),
+                });
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Continue with local logout even if API call fails
+        } finally {
+            // Always clear local storage and state
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userRole');
+            setIsAuthenticated(false);
+            setUserRole(null);
+
+            // Optional: Redirect to login page or home page
+            // window.location.href = '/login';
+        }
     };
 
     const value = {

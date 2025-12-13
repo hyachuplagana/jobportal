@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { TextField, Button, Divider, Radio, CircularProgress, FormControlLabel, RadioGroup } from "@mui/material";
 import { CheckCircle, ArrowLeft } from "lucide-react";
-import PixelBlast from "../components/PixelBlast";
+import PixelBlast from "../components/ReactBits/PixelBlast";
 import { useAuth } from "../context/AuthContext";
 
 const AuthIn = () => {
